@@ -12,7 +12,7 @@ from torch.autograd import Variable
 import data
 from model_PRPN import PRPN
 
-parser = argparse.ArgumentParser(description='PyTorch PennTreeBank RNN/LSTM Language Model')
+parser = argparse.ArgumentParser(description='PennTreeBank PRPN Language Model')
 parser.add_argument('--data', type=str, default='./data/penn',
                     help='location of the data corpus')
 parser.add_argument('--emsize', type=int, default=800,
@@ -35,9 +35,9 @@ parser.add_argument('--bptt', type=int, default=35,
                     help='sequence length')
 parser.add_argument('--dropout', type=float, default=0.7,
                     help='dropout applied to output layers (0 = no dropout)')
-parser.add_argument('--idropout', type=float, default=0.4,
+parser.add_argument('--idropout', type=float, default=0.5,
                     help='dropout applied to layers (0 = no dropout)')
-parser.add_argument('--rdropout', type=float, default=0.4,
+parser.add_argument('--rdropout', type=float, default=0.5,
                     help='dropout applied to recurrent states (0 = no dropout)')
 parser.add_argument('--tied', action='store_true',
                     help='tie the word embedding and softmax weights')
@@ -201,8 +201,8 @@ def train():
 # Loop over epochs.
 lr = args.lr
 best_val_loss = None
-optimizer = optim.Adam(model.parameters(), lr=0.003, betas=(0, 0.999), eps=1e-9, weight_decay=args.weight_decay)
-scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', 0.1, patience=1, threshold=0)
+optimizer = optim.Adam(model.parameters(), lr=args.lr, betas=(0, 0.999), eps=1e-9, weight_decay=args.weight_decay)
+scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', 0.5, patience=2, threshold=0)
 
 # At any point you can hit Ctrl + C to break out of training early.
 try:
