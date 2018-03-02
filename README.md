@@ -6,7 +6,7 @@ This repository contains the code used for word-level language model experiments
 
 + Install PyTorch 0.2
 + Download PTB data
-+ Run `python main.py --cuda --tied --hard`
++ Run `python main.py --cuda --tied --hard --data /path/to/your/data`
 + `demo.py` provide unlabeled parsing result and visualization of attention and gate for input sentences. 
 
 The default setting trains a PTB model achieves test perplexities of approximately `61.27`.
