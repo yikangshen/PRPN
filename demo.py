@@ -27,28 +27,6 @@ parser.add_argument('--seed', type=int, default=1111,
                     help='random seed')
 args = parser.parse_args()
 
-
-# def build_tree_depth(depth, sen):
-#     depth = depth.tolist()
-#     sorted_idx = numpy.argsort(depth)
-#     parse_tree = copy.copy(sen)
-#     i2i = numpy.arange(len(parse_tree))
-#     for idx in sorted_idx:
-#         idx_mapped = i2i[idx]
-#         new_node = parse_tree[idx_mapped]
-#         d = depth[idx_mapped]
-#         if idx < len(sen) - 1 and depth[idx_mapped + 1] <= d:
-#             new_node = [new_node, parse_tree.pop(idx_mapped + 1)]
-#             depth.pop(idx_mapped + 1)
-#             i2i[idx + 1:] -= 1
-#         if idx > 0 and depth[idx_mapped - 1] < d:
-#             idx_mapped -= 1
-#             new_node = [parse_tree.pop(idx_mapped), new_node]
-#             depth.pop(idx_mapped)
-#             i2i[idx:] -= 1
-#         parse_tree[idx_mapped] = new_node
-#     return parse_tree
-
 def build_tree(depth, sen):
     assert len(depth) == len(sen)
 
@@ -93,41 +71,18 @@ model.cpu()
 
 corpus = data.Corpus(args.data)
 ntokens = len(corpus.dictionary)
-hidden = model.init_hidden(1)
 input = Variable(torch.rand(1, 1).mul(ntokens).long(), volatile=True)
 
 while True:
     sens = raw_input('Input a sentences:')
+    words = sens.strip().split()
+    x = numpy.array([corpus.dictionary[w] for w in words])
+    input = Variable(torch.LongTensor(x[:, None]))
+
     hidden = model.init_hidden(1)
-    for s in sens.split('\t'):
-        words = s.strip().split()
-        x = numpy.array([corpus.dictionary[w] for w in words])
-        input = Variable(torch.LongTensor(x[:, None]))
-        
-        # hidden = model.init_hidden(1)
-        output, hidden = model(input, hidden)
-        output = output.squeeze().data.numpy()[:-1]
-        output = numpy.log(softmax(output))
-        output = numpy.pad(output, ((1, 0), (0, 0)), 'constant', constant_values=0)
-        output = numpy.exp(-output[range(len(words)), x])
+    _, hidden = model(input, hidden)
 
-        attentions = model.attentions.squeeze().data.numpy()
-        gates = model.gates.squeeze().data.numpy()
-        phrase = []
-        sentence = []
-        for i in range(len(words)):
-            print '%15s\t%7.1f\t%.3f\t%s' % (words[i], output[i], gates[i], plot(attentions[i], 1).replace('\n', '\t'))
-            midx = numpy.argmax(gates[i])
-            if midx > 0:
-                if phrase != []:
-                    sentence.append(phrase)
-                phrase = []
-            phrase.append(words[i])
-        sentence.append(phrase)
+    gates = model.gates.squeeze().data.numpy()
 
-        print output[1:].mean()
-
-        parse_tree = build_tree(gates, words)
-        print MRG(parse_tree)
-        # parse_tree = build_tree_depth(gates, words)
-        # print MRG(parse_tree)
+    parse_tree = build_tree(gates, words)
+    print MRG(parse_tree)
