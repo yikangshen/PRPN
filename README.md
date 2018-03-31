@@ -9,7 +9,7 @@ This repository contains the code used for word-level language model experiments
 + Run `python main.py --cuda --tied --hard --data /path/to/your/data`
 + `demo.py` generate unlabeled parsing tree for input sentences. 
 
-The default setting trains a PTB model achieves test perplexities of approximately `61.27`.
+The default setting trains a PTB model achieves test perplexities of approximately `60.97`.
 If you use this code or our results in your research, please cite:
 
 ```

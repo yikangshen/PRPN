@@ -25,7 +25,7 @@ class ParsingNetwork(nn.Module):
                                   nn.ReLU(),
                                   nn.Dropout(dropout),
                                   nn.Conv1d(nhid, 2, 1, groups=2),
-                                  nn.ReLU())
+                                  nn.Sigmoid())
 
     def forward(self, emb, parser_state):
         emb_last, cum_gate = parser_state
