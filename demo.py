@@ -1,18 +1,17 @@
 import argparse
-import copy
+
 import numpy
 import torch
 from torch.autograd import Variable
-from hinton import plot
-
-import matplotlib.pyplot as plt
 
 import data
+
 
 def softmax(x):
     """Compute softmax values for each sets of scores in x."""
     e_x = numpy.exp(x - numpy.max(x, axis=1, keepdims=True))
     return e_x / e_x.sum(axis=1, keepdims=True)
+
 
 numpy.set_printoptions(precision=2, suppress=True, linewidth=5000)
 
@@ -27,6 +26,7 @@ parser.add_argument('--seed', type=int, default=1111,
                     help='random seed')
 args = parser.parse_args()
 
+
 def build_tree(depth, sen):
     assert len(depth) == len(sen)
 
@@ -39,14 +39,15 @@ def build_tree(depth, sen):
             tree0 = build_tree(depth[:idx_max], sen[:idx_max])
             parse_tree.append(tree0)
         tree1 = sen[idx_max]
-        if len(sen[idx_max+1:]) > 0:
-            tree2 = build_tree(depth[idx_max+1:], sen[idx_max+1:])
+        if len(sen[idx_max + 1:]) > 0:
+            tree2 = build_tree(depth[idx_max + 1:], sen[idx_max + 1:])
             tree1 = [tree1, tree2]
         if parse_tree == []:
             parse_tree = tree1
         else:
             parse_tree.append(tree1)
     return parse_tree
+
 
 def MRG(tr):
     if isinstance(tr, str):
@@ -58,6 +59,7 @@ def MRG(tr):
             s += MRG(subtr)
         s += ')'
         return s
+
 
 # Set the random seed manually for reproducibility.
 torch.manual_seed(args.seed)

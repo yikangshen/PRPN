@@ -51,7 +51,7 @@ parser.add_argument('--cuda', action='store_true',
                     help='use CUDA')
 parser.add_argument('--log-interval', type=int, default=100, metavar='N',
                     help='report interval')
-parser.add_argument('--save', type=str, default=None,
+parser.add_argument('--save', type=str, default='./model/model_LM.pt',
                     help='path to save the final model')
 parser.add_argument('--load', type=str, default=None,
                     help='path to save the final model')
@@ -66,10 +66,6 @@ parser.add_argument('--device', type=int, default=0,
 args = parser.parse_args()
 
 torch.cuda.set_device(args.device)
-
-if args.save is None:
-    args.save = 'model.pt'
-args.save = './model/' + args.save
 
 # Set the random seed manually for reproducibility.
 torch.manual_seed(args.seed)
