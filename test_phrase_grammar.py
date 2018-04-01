@@ -93,8 +93,8 @@ def test(model, corpus, cuda, prt=False):
 
         nsens += 1
         if prt and nsens % 100 == 0:
-            for i in range(len(sen)):
-                print '%15s\t%.2f\t%s' % (sen[i], depth[i], str(attentions[i, 1]))
+            # for i in range(len(sen)):
+            #     print '%15s\t%.2f\t%s' % (sen[i], depth[i], str(attentions[i, 1]))
             print 'Model output:'
             print parse_tree
             print model_out

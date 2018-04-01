@@ -8,7 +8,7 @@ This repository contains the code used for word-level language model and unsuper
 + Download PTB data (Note that language model and unsupervised parsing task request the PTB data in different format)
 + Run `python main_LM.py --cuda --tied --hard --data /path/to/your/data` for language model task
 + Run `python main_UP.py --cuda --tied --hard` for unsupervised parsing task (12GB graphic memory is needed for running this experiment)
-+ `demo.py` generate unlabeled parsing tree for input sentences. 
++ Run `test_phrase_grammar.py` for showing parsing examples and testing on WSJ10 dataset. 
 
 The default setting in `main_LM.py` trains a PTB language model achieves test perplexities of approximately `60.97`.
 The default setting in `main_UP.py` trains a PTB unsupervised parsing model achieves unlabeled f1 of approximately `0.70`.
