@@ -7,7 +7,7 @@ This repository contains the code used for word-level language model and unsuper
 + Install PyTorch 0.2 and NLTK
 + Download PTB data (Note that language model and unsupervised parsing task request the PTB data in different format)
 + Run `python main_LM.py --cuda --tied --hard --data /path/to/your/data` for language model task
-+ Run `python main_UP.py --cuda --tied --hard` for unsupervised parsing task
++ Run `python main_UP.py --cuda --tied --hard` for unsupervised parsing task (a Tesla K80 is used for running this experiment)
 + `demo.py` generate unlabeled parsing tree for input sentences. 
 
 The default setting in `main_LM.py` trains a PTB language model achieves test perplexities of approximately `60.97`.
