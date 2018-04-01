@@ -135,6 +135,8 @@ class Corpus(object):
             for sen_tree in sentences:
                 words = self.filter_words(sen_tree)
                 words = ['<s>'] + words + ['</s>']
+                # if len(words) > 50:
+                #     continue
                 sens.append(words)
                 idx = []
                 for word in words:
