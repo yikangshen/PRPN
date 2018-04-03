@@ -36,5 +36,4 @@ Python 2.7, NLTK and PyTorch 0.2 are required for the current codebase.
     ```python main_UP.py --cuda --tied --hard```
 
     The default setting in `main_UP.py` achieves an unlabeled f1 of approximately `0.70` on the standard test set of PTB WSJ10 subset. For visualizing the parsed sentence trees in nested bracket form, and evaluate the trained model, please run
-
 	```test_phrase_grammar.py```
