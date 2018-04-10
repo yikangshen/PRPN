@@ -185,6 +185,7 @@ def train():
     # Turn on training mode which enables dropout.
     model.train()
     total_loss = 0
+    train_loss = 0
     start_time = time.time()
     ntokens = len(corpus.dictionary)
     for batch in range(len(train_data)):
@@ -202,6 +203,7 @@ def train():
         optimizer.step()
 
         total_loss += loss.data
+        train_loss += loss.data
 
         if batch % args.log_interval == 0 and batch > 0:
             cur_loss = total_loss[0] / args.log_interval
@@ -213,29 +215,31 @@ def train():
             total_loss = 0
             start_time = time.time()
 
+    return train_loss[0] / batch
+
 
 # Loop over epochs.
 lr = args.lr
-best_val_loss = None
+best_loss = None
 optimizer = optim.Adam(model.parameters(), lr=args.lr, betas=(0, 0.999), eps=1e-9, weight_decay=args.weight_decay)
-scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'max', 0.5, patience=3)
+scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', 0.5, patience=0)
 
 # At any point you can hit Ctrl + C to break out of training early.
 try:
     for epoch in range(1, args.epochs + 1):
         epoch_start_time = time.time()
-        train()
-        val_loss = test(model, corpus, args.cuda)
+        train_loss = train()
+        test_f1 = test(model, corpus, args.cuda)
         print('-' * 89)
-        print('| end of epoch {:3d} | time: {:5.2f}s | test f1 {:5.2f}'.format(epoch, (time.time() - epoch_start_time),
-                                         val_loss, math.exp(val_loss)))
+        print('| end of epoch {:3d} | time: {:5.2f}s | train loss {:5.2f} | test f1 {:5.2f}'.format(
+            epoch, (time.time() - epoch_start_time), train_loss, test_f1))
         print('-' * 89)
         # Save the model if the validation loss is the best we've seen so far.
-        if not best_val_loss or val_loss > best_val_loss:
+        if not best_loss or train_loss < best_loss:
             with open(args.save, 'wb') as f:
                 torch.save(model, f)
-            best_val_loss = val_loss
-        scheduler.step(val_loss)
+            best_loss = train_loss
+        scheduler.step(train_loss)
 
 except KeyboardInterrupt:
     print('-' * 89)
@@ -246,8 +250,8 @@ with open(args.save, 'rb') as f:
     model = torch.load(f)
 
 # Run on test data.
-test_loss = test(model, corpus, args.cuda)
+test_f1 = test(model, corpus, args.cuda)
 print('=' * 89)
 print('| End of training | test f1 {:5.2f}'.format(
-    test_loss))
+    test_f1))
 print('=' * 89)
